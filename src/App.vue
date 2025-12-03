@@ -8,11 +8,13 @@ const loading = ref(false)
 const latest = ref({ sugar_close: 0, usd_cny_rate: 0, bdi_index: 0, import_cost_estimate: 0 })
 const history = ref<any[]>([])
 
+const API_BASE = import.meta.env.PROD ? 'https://sugar-api.thankscrw.top' : ''
+
 const fetchData = async () => {
   try {
     const [latestRes, historyRes] = await Promise.all([
-      axios.get('/api/market/daily?limit=1'),
-      axios.get('/api/market/daily?limit=30')
+      axios.get(`${API_BASE}/api/market/daily?limit=1`),
+      axios.get(`${API_BASE}/api/market/daily?limit=30`)
     ])
     
     console.log('Latest data:', latestRes.data)
