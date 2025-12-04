@@ -8,7 +8,7 @@ const loading = ref(false)
 const latest = ref({ sugar_close: 0, usd_cny_rate: 0, bdi_index: 0, import_cost_estimate: 0 })
 const history = ref<any[]>([])
 
-const API_BASE = import.meta.env.PROD ? 'https://sugar-api.thankscrw.top' : ''
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 const fetchData = async () => {
   try {
