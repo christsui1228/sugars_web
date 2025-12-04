@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, provide } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { NConfigProvider, NMessageProvider, NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NMenu, NButton, NDatePicker } from 'naive-ui'
 import { useResponsive } from './composables/useResponsive'
@@ -18,6 +18,10 @@ const siderWidth = computed(() => {
 // 日期范围
 const endDate = ref(new Date().getTime())
 const startDate = ref(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).getTime())
+
+// 提供日期给子组件
+provide('startDate', startDate)
+provide('endDate', endDate)
 
 const menuOptions = [
   {
@@ -53,12 +57,17 @@ const setDateRange = (days: number) => {
 
 const refreshData = async () => {
   try {
-    await fetchData()
+    await fetchData(startDate.value, endDate.value)
     window.$message?.success('数据刷新成功')
   } catch (error) {
     window.$message?.error('数据刷新失败')
   }
 }
+
+// 监听日期变化，自动刷新数据
+watch([startDate, endDate], () => {
+  fetchData(startDate.value, endDate.value)
+})
 </script>
 
 <template>
