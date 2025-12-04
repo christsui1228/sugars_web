@@ -14,21 +14,24 @@ const collapsed = ref(false)
 
 const siderWidth = computed(() => {
   if (isMobile.value) return 0
-  return collapsed.value ? 64 : 240
+  return collapsed.value ? 80 : 288  // 增加20%: 240 * 1.2 = 288, 64 * 1.25 = 80
 })
 
 const menuOptions = [
   {
     label: '📊 市场概览',
-    key: 'Market'
+    key: 'Market',
+    style: 'font-size: 25px;'
   },
   {
     label: '💰 套利分析',
-    key: 'Arbitrage'
+    key: 'Arbitrage',
+    style: 'font-size: 25px;'
   },
   {
     label: '📈 宏观驱动',
-    key: 'Macro'
+    key: 'Macro',
+    style: 'font-size: 25px;'
   }
 ]
 
@@ -73,9 +76,10 @@ const refreshData = async () => {
             :value="activeKey"
             :options="menuOptions"
             :collapsed="collapsed"
-            :collapsed-width="64"
-            :collapsed-icon-size="22"
+            :collapsed-width="80"
+            :collapsed-icon-size="33"
             @update:value="handleMenuSelect"
+            style="font-size: 25px;"
           />
         </NLayoutSider>
 
@@ -118,3 +122,27 @@ const refreshData = async () => {
     </NMessageProvider>
   </NConfigProvider>
 </template>
+
+<style>
+/* 侧边栏菜单项样式优化 */
+.n-menu-item {
+  font-size: 25px !important;
+  padding: 16px 20px !important;
+  height: auto !important;
+  min-height: 60px !important;
+}
+
+.n-menu-item-content {
+  font-size: 25px !important;
+}
+
+.n-menu-item-content__icon {
+  font-size: 36px !important;  /* 图标也相应增大 */
+  margin-right: 16px !important;
+}
+
+/* 折叠状态下的图标 */
+.n-menu--collapsed .n-menu-item-content__icon {
+  font-size: 38px !important;
+}
+</style>
