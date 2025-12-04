@@ -44,8 +44,8 @@ export function calculateCorrelation(x: number[], y: number[]): number {
   let varianceY = 0
   
   for (let i = 0; i < n; i++) {
-    const dx = x[i] - meanX
-    const dy = y[i] - meanY
+    const dx = x[i]! - meanX
+    const dy = y[i]! - meanY
     covariance += dx * dy
     varianceX += dx * dx
     varianceY += dy * dy
