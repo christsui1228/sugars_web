@@ -41,7 +41,7 @@ const changeText = computed(() => {
     <div style="height: 100%; display: flex; flex-direction: column;">
       <!-- 顶部：标题和涨跌幅 -->
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-        <span style="font-size: 14px; color: #86868B; font-weight: 500;">{{ title }}</span>
+        <span style="font-size: 21px; color: #86868B; font-weight: 500;">{{ title }}</span>
         <span 
           v-if="change !== undefined" 
           :style="{ 

@@ -20,7 +20,7 @@ const props = defineProps<Props>()
 const chartRef = ref<HTMLDivElement>()
 let chartInstance: echarts.ECharts | null = null
 
-const { isMobile, isTablet, isDesktop } = useResponsive()
+const { isTablet, isDesktop } = useResponsive()
 
 const chartHeight = computed(() => {
   if (isDesktop.value) return '600px'

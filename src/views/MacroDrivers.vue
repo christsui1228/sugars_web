@@ -4,7 +4,6 @@ import { NGrid, NGridItem, NCard, NSpin } from 'naive-ui'
 import * as echarts from 'echarts'
 import { useMarketData } from '../composables/useMarketData'
 import { calculateCorrelation, getCorrelationStrength, normalizeData, linearRegression } from '../utils/calculations'
-import MetricCard from '../components/MetricCard.vue'
 
 const { history, loading, fetchData } = useMarketData()
 

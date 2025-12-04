@@ -89,7 +89,7 @@ export function getCorrelationStrength(r: number): {
 // 4. 数据归一化
 export function normalizeData(data: number[]): number[] {
   if (data.length === 0) return []
-  const base = data[0]
+  const base = data[0]!
   if (base === 0) return data.map(() => 100)
   return data.map(value => (value / base) * 100)
 }
@@ -113,8 +113,8 @@ export function linearRegression(x: number[], y: number[]): {
   let denominator = 0
   
   for (let i = 0; i < n; i++) {
-    numerator += (x[i] - meanX) * (y[i] - meanY)
-    denominator += (x[i] - meanX) ** 2
+    numerator += (x[i]! - meanX) * (y[i]! - meanY)
+    denominator += (x[i]! - meanX) ** 2
   }
   
   const slope = denominator === 0 ? 0 : numerator / denominator

@@ -69,8 +69,8 @@ const latestMetrics = computed(() => {
     }
   }
   
-  const inQuotaProfit = arbitrageData.value.inQuotaProfits[0]
-  const outQuotaProfit = arbitrageData.value.outQuotaProfits[0]
+  const inQuotaProfit = arbitrageData.value.inQuotaProfits[0]!
+  const outQuotaProfit = arbitrageData.value.outQuotaProfits[0]!
   
   return {
     inQuotaProfit,
@@ -181,7 +181,7 @@ const renderSpreadChart = () => {
       {
         name: '利润区域',
         type: 'line',
-        data: sugarPrices.map((price, i) => Math.max(price, inQuotaCosts[i])),
+        data: sugarPrices.map((price, i) => Math.max(price, inQuotaCosts[i]!)),
         lineStyle: { width: 0 },
         areaStyle: {
           color: {
@@ -201,7 +201,7 @@ const renderSpreadChart = () => {
       {
         name: '亏损区域',
         type: 'line',
-        data: inQuotaCosts.map((cost, i) => Math.max(cost, sugarPrices[i])),
+        data: inQuotaCosts.map((cost, i) => Math.max(cost, sugarPrices[i]!)),
         lineStyle: { width: 0 },
         areaStyle: {
           color: {
@@ -333,16 +333,18 @@ watch(() => history.value, () => {
       <NGrid :cols="3" :x-gap="20" :y-gap="20" style="margin-bottom: 32px;">
         <NGridItem>
           <MetricCard
-            title="配额内进口利润"
-            :value="latestMetrics.inQuotaProfit"
+            title="配额内进口利润 (TRQ)"
+            :value="Number((latestMetrics.inQuotaProfit ?? 0).toFixed(2))"
             suffix="元/吨"
+            style="--title-font-size: 21px;"
           />
         </NGridItem>
         <NGridItem>
           <MetricCard
-            title="配额外进口利润"
-            :value="latestMetrics.outQuotaProfit"
+            title="配额外进口利润 (AIL)"
+            :value="Number((latestMetrics.outQuotaProfit ?? 0).toFixed(2))"
             suffix="元/吨"
+            style="--title-font-size: 21px;"
           />
         </NGridItem>
         <NGridItem>
