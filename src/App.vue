@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NConfigProvider, NMessageProvider, NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NMenu, NButton } from 'naive-ui'
+import { NConfigProvider, NMessageProvider, NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NMenu, NButton, NDatePicker } from 'naive-ui'
 import { useResponsive } from './composables/useResponsive'
 import { useMarketData } from './composables/useMarketData'
 
@@ -10,12 +10,14 @@ const route = useRoute()
 const { isMobile } = useResponsive()
 const { loading, fetchData } = useMarketData()
 
-const collapsed = ref(false)
-
 const siderWidth = computed(() => {
   if (isMobile.value) return 0
-  return collapsed.value ? 80 : 288  // 增加20%: 240 * 1.2 = 288, 64 * 1.25 = 80
+  return 288  // 固定宽度，不再折叠
 })
+
+// 日期范围
+const startDate = ref(new Date('2024-11-26').getTime())
+const endDate = ref(new Date('2025-11-26').getTime())
 
 const menuOptions = [
   {
@@ -41,6 +43,14 @@ const handleMenuSelect = (key: string) => {
   router.push({ name: key })
 }
 
+const setDateRange = (days: number) => {
+  const end = new Date()
+  const start = new Date()
+  start.setDate(start.getDate() - days)
+  startDate.value = start.getTime()
+  endDate.value = end.getTime()
+}
+
 const refreshData = async () => {
   try {
     await fetchData()
@@ -59,25 +69,17 @@ const refreshData = async () => {
         <NLayoutSider
           v-if="!isMobile"
           :width="siderWidth"
-          :collapsed="collapsed"
-          collapse-mode="width"
           bordered
           style="background: #FFFFFF;"
         >
           <div style="padding: 24px 16px;">
-            <div v-if="!collapsed" style="font-size: 35px; font-weight: 700; color: #1D1D1F; margin-bottom: 24px; text-align: center;">
+            <div style="font-size: 30px; font-weight: 700; color: #1D1D1F; margin-bottom: 24px; text-align: center;">
               Sugar Nexus
-            </div>
-            <div v-else style="font-size: 24px; text-align: center; margin-bottom: 24px;">
-              S
             </div>
           </div>
           <NMenu
             :value="activeKey"
             :options="menuOptions"
-            :collapsed="collapsed"
-            :collapsed-width="80"
-            :collapsed-icon-size="33"
             @update:value="handleMenuSelect"
             style="font-size: 25px;"
           />
@@ -85,31 +87,29 @@ const refreshData = async () => {
 
         <NLayout>
           <!-- 顶栏 -->
-          <NLayoutHeader style="height: 80px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border-bottom: 1px solid #E5E5EA;">
+          <NLayoutHeader style="height: 80px; padding: 0 32px; display: flex; align-items: center; justify-content: flex-end; background: #FFFFFF; border-bottom: 1px solid #E5E5EA;">
             <div style="display: flex; align-items: center; gap: 16px;">
-              <NButton
-                v-if="!isMobile"
-                text
-                @click="collapsed = !collapsed"
-                style="font-size: 20px;"
-              >
-                {{ collapsed ? '☰' : '✕' }}
-              </NButton>
               <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 40px; height: 40px; background: #1D1D1F; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 20px;">
-                  S
-                </div>
-                <div>
-                  <div style="font-size: 24px; font-weight: 700; color: #1D1D1F;">Sugar Nexus</div>
-                  <div style="font-size: 14px; font-weight: 400; color: #86868B;">糖业情报局</div>
-                </div>
+                <span style="font-size: 14px; color: #86868B;">开始日期</span>
+                <NDatePicker 
+                  v-model:value="startDate" 
+                  type="date"
+                  style="width: 160px;"
+                />
+                <span style="font-size: 14px; color: #86868B;">结束日期</span>
+                <NDatePicker 
+                  v-model:value="endDate" 
+                  type="date"
+                  style="width: 160px;"
+                />
               </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 16px;">
-              <div style="font-size: 14px; color: #86868B; font-weight: 400;">
-                📅 2020-01 - 2024-12
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 14px; color: #86868B;">快捷选择:</span>
+                <NButton @click="setDateRange(7)" size="small" secondary>最近7天</NButton>
+                <NButton @click="setDateRange(30)" size="small" secondary>最近30天</NButton>
+                <NButton @click="setDateRange(90)" size="small" secondary>最近90天</NButton>
               </div>
-              <NButton @click="refreshData" :loading="loading" secondary>刷新数据</NButton>
+              <NButton @click="refreshData" :loading="loading" type="success">🔄 加载数据</NButton>
             </div>
           </NLayoutHeader>
 
