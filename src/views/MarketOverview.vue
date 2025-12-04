@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, inject, type Ref } from 'vue'
 import MetricsGrid from '../components/MetricsGrid.vue'
 import ChartCard from '../components/ChartCard.vue'
 import { useMarketData } from '../composables/useMarketData'
 
 const { history, metrics, fetchData } = useMarketData()
 
+const startDate = inject<Ref<number>>('startDate')
+const endDate = inject<Ref<number>>('endDate')
+
 onMounted(() => {
   if (history.value.length === 0) {
-    fetchData()
+    fetchData(startDate?.value, endDate?.value)
   }
 })
 </script>

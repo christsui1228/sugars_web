@@ -17,12 +17,24 @@ const loading = ref(false)
 export function useMarketData() {
   const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
   
-  const fetchData = async () => {
+  const fetchData = async (startDate?: number, endDate?: number) => {
     loading.value = true
     try {
+      let historyUrl = `${API_BASE}/api/market/daily?limit=30`
+      let latestUrl = `${API_BASE}/api/market/daily?limit=1`
+      
+      // 如果提供了日期范围，使用日期查询
+      if (startDate && endDate) {
+        const start = new Date(startDate).toISOString().split('T')[0]
+        const end = new Date(endDate).toISOString().split('T')[0]
+        historyUrl = `${API_BASE}/api/market/daily?start_date=${start}&end_date=${end}`
+        // 获取结束日期当天的数据
+        latestUrl = `${API_BASE}/api/market/daily?start_date=${end}&end_date=${end}`
+      }
+      
       const [latestRes, historyRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/market/daily?limit=1`),
-        axios.get(`${API_BASE}/api/market/daily?limit=30`)
+        axios.get(latestUrl),
+        axios.get(historyUrl)
       ])
       
       latest.value = latestRes.data[0] || null
