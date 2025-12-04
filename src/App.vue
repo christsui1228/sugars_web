@@ -16,8 +16,8 @@ const siderWidth = computed(() => {
 })
 
 // 日期范围
-const startDate = ref(new Date('2024-11-26').getTime())
-const endDate = ref(new Date('2025-11-26').getTime())
+const endDate = ref(new Date().getTime())
+const startDate = ref(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).getTime())
 
 const menuOptions = [
   {
@@ -87,29 +87,28 @@ const refreshData = async () => {
 
         <NLayout>
           <!-- 顶栏 -->
-          <NLayoutHeader style="height: 80px; padding: 0 32px; display: flex; align-items: center; justify-content: flex-end; background: #FFFFFF; border-bottom: 1px solid #E5E5EA;">
-            <div style="display: flex; align-items: center; gap: 16px;">
-              <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 14px; color: #86868B;">开始日期</span>
+          <NLayoutHeader style="height: 125px; padding: 0 32px; display: flex; align-items: center; justify-content: flex-end; background: #FFFFFF; border-bottom: 1px solid #E5E5EA;">
+            <div style="display: flex; align-items: center; gap: 31px;">
+              <div style="display: flex; align-items: center; gap: 23px;">
+                <span style="font-size: 23px; color: #86868B;">开始日期</span>
                 <NDatePicker 
                   v-model:value="startDate" 
                   type="date"
-                  style="width: 160px;"
+                  style="width: 187px; height: 85px; font-size: 40px;"
                 />
-                <span style="font-size: 14px; color: #86868B;">结束日期</span>
+                <span style="font-size: 23px; color: #86868B;">结束日期</span>
                 <NDatePicker 
                   v-model:value="endDate" 
                   type="date"
-                  style="width: 160px;"
+                  style="width: 187px; height: 85px; font-size: 40px;"
                 />
               </div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 14px; color: #86868B;">快捷选择:</span>
-                <NButton @click="setDateRange(7)" size="small" secondary>最近7天</NButton>
-                <NButton @click="setDateRange(30)" size="small" secondary>最近30天</NButton>
-                <NButton @click="setDateRange(90)" size="small" secondary>最近90天</NButton>
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <NButton @click="setDateRange(7)" size="large" secondary style="min-width: 130px; font-size: 23px; height: 55px;">最近7天</NButton>
+                <NButton @click="setDateRange(30)" size="large" secondary style="min-width: 130px; font-size: 23px; height: 55px;">最近30天</NButton>
+                <NButton @click="setDateRange(90)" size="large" secondary style="min-width: 130px; font-size: 23px; height: 55px;">最近90天</NButton>
               </div>
-              <NButton @click="refreshData" :loading="loading" type="success">🔄 加载数据</NButton>
+              <NButton @click="refreshData" :loading="loading" type="success" size="large" style="min-width: 156px; font-size: 23px; height: 55px;">🔄 加载数据</NButton>
             </div>
           </NLayoutHeader>
 
@@ -144,5 +143,18 @@ const refreshData = async () => {
 /* 折叠状态下的图标 */
 .n-menu--collapsed .n-menu-item-content__icon {
   font-size: 38px !important;
+}
+
+/* 日期选择器字体大小 */
+.n-date-picker .n-input__input-el {
+  font-size: 23px !important;
+}
+
+.n-date-picker .n-input {
+  font-size: 23px !important;
+}
+
+.n-date-picker-trigger .n-input__input {
+  font-size: 23px !important;
 }
 </style>
