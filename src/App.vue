@@ -65,7 +65,7 @@ const refreshData = async () => {
           style="background: #FFFFFF;"
         >
           <div style="padding: 24px 16px;">
-            <div v-if="!collapsed" style="font-size: 20px; font-weight: 700; color: #1D1D1F; margin-bottom: 24px;">
+            <div v-if="!collapsed" style="font-size: 35px; font-weight: 700; color: #1D1D1F; margin-bottom: 24px; text-align: center;">
               Sugar Nexus
             </div>
             <div v-else style="font-size: 24px; text-align: center; margin-bottom: 24px;">
