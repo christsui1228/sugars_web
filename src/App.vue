@@ -96,28 +96,28 @@ watch([startDate, endDate], () => {
 
         <NLayout>
           <!-- 顶栏 -->
-          <NLayoutHeader style="height: 125px; padding: 0 32px; display: flex; align-items: center; justify-content: flex-end; background: #FFFFFF; border-bottom: 1px solid #E5E5EA;">
-            <div style="display: flex; align-items: center; gap: 31px;">
-              <div style="display: flex; align-items: center; gap: 23px;">
-                <span style="font-size: 23px; color: #86868B;">开始日期</span>
+          <NLayoutHeader style="min-height: 125px; padding: 16px clamp(16px, 3vw, 32px); display: flex; align-items: center; justify-content: flex-end; background: #FFFFFF; border-bottom: 1px solid #E5E5EA;">
+            <div style="display: flex; align-items: center; gap: clamp(12px, 2vw, 20px); flex-wrap: wrap; width: 100%; justify-content: flex-end;">
+              <div style="display: flex; align-items: center; gap: clamp(8px, 1.5vw, 16px); flex-wrap: wrap;">
+                <span style="font-size: clamp(14px, 1.8vw, 23px); color: #86868B; white-space: nowrap; line-height: 1;">开始日期</span>
                 <NDatePicker 
                   v-model:value="startDate" 
                   type="date"
-                  style="width: 187px; height: 85px; font-size: 40px;"
+                  style="width: clamp(120px, 12vw, 187px); height: clamp(45px, 7vh, 85px); display: flex; align-items: center;"
                 />
-                <span style="font-size: 23px; color: #86868B;">结束日期</span>
+                <span style="font-size: clamp(14px, 1.8vw, 23px); color: #86868B; white-space: nowrap; line-height: 1;">结束日期</span>
                 <NDatePicker 
                   v-model:value="endDate" 
                   type="date"
-                  style="width: 187px; height: 85px; font-size: 40px;"
+                  style="width: clamp(120px, 12vw, 187px); height: clamp(45px, 7vh, 85px); display: flex; align-items: center;"
                 />
               </div>
-              <div style="display: flex; align-items: center; gap: 16px;">
-                <NButton @click="setDateRange(7)" size="large" secondary style="min-width: 130px; font-size: 23px; height: 55px;">最近7天</NButton>
-                <NButton @click="setDateRange(30)" size="large" secondary style="min-width: 130px; font-size: 23px; height: 55px;">最近30天</NButton>
-                <NButton @click="setDateRange(90)" size="large" secondary style="min-width: 130px; font-size: 23px; height: 55px;">最近90天</NButton>
+              <div style="display: flex; align-items: center; gap: clamp(8px, 1vw, 12px); flex-wrap: wrap;">
+                <NButton @click="setDateRange(7)" size="large" secondary style="min-width: clamp(70px, 8vw, 130px); font-size: clamp(12px, 1.5vw, 23px); height: clamp(45px, 7vh, 55px); padding: 0 clamp(8px, 1vw, 16px); display: flex; align-items: center; justify-content: center;">最近7天</NButton>
+                <NButton @click="setDateRange(30)" size="large" secondary style="min-width: clamp(70px, 8vw, 130px); font-size: clamp(12px, 1.5vw, 23px); height: clamp(45px, 7vh, 55px); padding: 0 clamp(8px, 1vw, 16px); display: flex; align-items: center; justify-content: center;">最近30天</NButton>
+                <NButton @click="setDateRange(90)" size="large" secondary style="min-width: clamp(70px, 8vw, 130px); font-size: clamp(12px, 1.5vw, 23px); height: clamp(45px, 7vh, 55px); padding: 0 clamp(8px, 1vw, 16px); display: flex; align-items: center; justify-content: center;">最近90天</NButton>
               </div>
-              <NButton @click="refreshData" :loading="loading" type="success" size="large" style="min-width: 156px; font-size: 23px; height: 55px;">🔄 加载数据</NButton>
+              <NButton @click="refreshData" :loading="loading" type="success" size="large" style="min-width: clamp(90px, 10vw, 156px); font-size: clamp(12px, 1.5vw, 23px); height: clamp(45px, 7vh, 55px); padding: 0 clamp(8px, 1vw, 16px); display: flex; align-items: center; justify-content: center;">🔄 加载数据</NButton>
             </div>
           </NLayoutHeader>
 
