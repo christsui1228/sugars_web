@@ -1,122 +1,119 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
-import { NConfigProvider, NMessageProvider, darkTheme, NLayout, NLayoutHeader, NGrid, NGridItem, NCard, NStatistic, NButton } from 'naive-ui'
-import axios from 'axios'
-import * as echarts from 'echarts'
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { NConfigProvider, NMessageProvider, NLayout, NLayoutSider, NLayoutHeader, NLayoutContent, NMenu, NButton } from 'naive-ui'
+import { useResponsive } from './composables/useResponsive'
+import { useMarketData } from './composables/useMarketData'
 
-const loading = ref(false)
-const latest = ref({ sugar_close: 0, usd_cny_rate: 0, bdi_index: 0, import_cost_estimate: 0 })
-const history = ref<any[]>([])
+const router = useRouter()
+const route = useRoute()
+const { isMobile } = useResponsive()
+const { loading, fetchData } = useMarketData()
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+const collapsed = ref(false)
 
-const fetchData = async () => {
-  try {
-    const [latestRes, historyRes] = await Promise.all([
-      axios.get(`${API_BASE}/api/market/daily?limit=1`),
-      axios.get(`${API_BASE}/api/market/daily?limit=30`)
-    ])
-    
-    console.log('Latest data:', latestRes.data)
-    console.log('History data:', historyRes.data)
-    
-    latest.value = latestRes.data[0] || { sugar_close: 0, usd_cny_rate: 0, bdi_index: 0, import_cost_estimate: 0 }
-    history.value = historyRes.data || []
-    
-    await nextTick()
-    renderChart()
-  } catch (error) {
-    console.error('数据加载失败:', error)
-    window.$message?.error('数据加载失败')
+const siderWidth = computed(() => {
+  if (isMobile.value) return 0
+  return collapsed.value ? 64 : 240
+})
+
+const menuOptions = [
+  {
+    label: '📊 市场概览',
+    key: 'Market'
+  },
+  {
+    label: '💰 套利分析',
+    key: 'Arbitrage'
+  },
+  {
+    label: '📈 宏观驱动',
+    key: 'Macro'
   }
+]
+
+const activeKey = computed(() => route.name as string)
+
+const handleMenuSelect = (key: string) => {
+  router.push({ name: key })
 }
 
 const refreshData = async () => {
-  loading.value = true
   try {
     await fetchData()
     window.$message?.success('数据刷新成功')
   } catch (error) {
     window.$message?.error('数据刷新失败')
-  } finally {
-    loading.value = false
   }
 }
-
-const renderChart = () => {
-  const chartDom = document.getElementById('chart')
-  if (!chartDom) {
-    console.error('Chart DOM not found')
-    return
-  }
-  
-  if (history.value.length === 0) {
-    console.warn('No history data to render')
-    return
-  }
-  
-  const chart = echarts.init(chartDom)
-  const dates = history.value.map(d => d.record_date).reverse()
-  const sugar = history.value.map(d => d.sugar_close).reverse()
-  const bdi = history.value.map(d => d.bdi_index).reverse()
-  
-  chart.setOption({
-    backgroundColor: 'transparent',
-    tooltip: { trigger: 'axis' },
-    legend: { data: ['郑糖价格', 'BDI指数'], textStyle: { color: '#fff' } },
-    xAxis: { type: 'category', data: dates, axisLabel: { color: '#fff', rotate: 45 } },
-    yAxis: [
-      { type: 'value', name: '郑糖', axisLabel: { color: '#fff' }, nameTextStyle: { color: '#fff' } },
-      { type: 'value', name: 'BDI', axisLabel: { color: '#fff' }, nameTextStyle: { color: '#fff' } }
-    ],
-    series: [
-      { name: '郑糖价格', type: 'line', data: sugar, yAxisIndex: 0, smooth: true },
-      { name: 'BDI指数', type: 'bar', data: bdi, yAxisIndex: 1 }
-    ],
-    grid: { bottom: 80 }
-  })
-}
-
-onMounted(fetchData)
 </script>
 
 <template>
-  <NConfigProvider :theme="darkTheme">
+  <NConfigProvider>
     <NMessageProvider>
-      <NLayout style="min-height: 100vh; background: #101014;">
-        <NLayoutHeader style="height: 64px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; background: #18181c;">
-          <div style="font-size: 24px; font-weight: bold;">🍬 Sugar Nexus 糖业情报局</div>
-          <NButton @click="refreshData" :loading="loading">刷新数据</NButton>
-        </NLayoutHeader>
-        
-        <div style="padding: 24px;">
-          <NGrid :cols="4" :x-gap="16" style="margin-bottom: 24px;">
-            <NGridItem>
-              <NCard title="郑糖价格">
-                <NStatistic :value="latest.sugar_close" suffix=" 元/吨" />
-              </NCard>
-            </NGridItem>
-            <NGridItem>
-              <NCard title="美元汇率">
-                <NStatistic :value="latest.usd_cny_rate" />
-              </NCard>
-            </NGridItem>
-            <NGridItem>
-              <NCard title="BDI指数">
-                <NStatistic :value="latest.bdi_index" />
-              </NCard>
-            </NGridItem>
-            <NGridItem>
-              <NCard title="估算进口成本">
-                <NStatistic :value="latest.import_cost_estimate" suffix=" 元/吨" />
-              </NCard>
-            </NGridItem>
-          </NGrid>
-          
-          <NCard title="历史趋势">
-            <div id="chart" style="height: 500px; width: 100%;"></div>
-          </NCard>
-        </div>
+      <NLayout has-sider style="min-height: 100vh; background: #F5F5F7;">
+        <!-- 侧边栏 -->
+        <NLayoutSider
+          v-if="!isMobile"
+          :width="siderWidth"
+          :collapsed="collapsed"
+          collapse-mode="width"
+          bordered
+          style="background: #FFFFFF;"
+        >
+          <div style="padding: 24px 16px;">
+            <div v-if="!collapsed" style="font-size: 20px; font-weight: 700; color: #1D1D1F; margin-bottom: 24px;">
+              Sugar Nexus
+            </div>
+            <div v-else style="font-size: 24px; text-align: center; margin-bottom: 24px;">
+              S
+            </div>
+          </div>
+          <NMenu
+            :value="activeKey"
+            :options="menuOptions"
+            :collapsed="collapsed"
+            :collapsed-width="64"
+            :collapsed-icon-size="22"
+            @update:value="handleMenuSelect"
+          />
+        </NLayoutSider>
+
+        <NLayout>
+          <!-- 顶栏 -->
+          <NLayoutHeader style="height: 80px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border-bottom: 1px solid #E5E5EA;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <NButton
+                v-if="!isMobile"
+                text
+                @click="collapsed = !collapsed"
+                style="font-size: 20px;"
+              >
+                {{ collapsed ? '☰' : '✕' }}
+              </NButton>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: #1D1D1F; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 20px;">
+                  S
+                </div>
+                <div>
+                  <div style="font-size: 24px; font-weight: 700; color: #1D1D1F;">Sugar Nexus</div>
+                  <div style="font-size: 14px; font-weight: 400; color: #86868B;">糖业情报局</div>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="font-size: 14px; color: #86868B; font-weight: 400;">
+                📅 2020-01 - 2024-12
+              </div>
+              <NButton @click="refreshData" :loading="loading" secondary>刷新数据</NButton>
+            </div>
+          </NLayoutHeader>
+
+          <!-- 内容区域 -->
+          <NLayoutContent style="padding: 32px;">
+            <RouterView />
+          </NLayoutContent>
+        </NLayout>
       </NLayout>
     </NMessageProvider>
   </NConfigProvider>
