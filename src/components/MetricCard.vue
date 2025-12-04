@@ -7,9 +7,19 @@ interface Props {
   value: number
   suffix?: string
   change?: number
+  decimals?: number
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  decimals: 0
+})
+
+const formattedValue = computed(() => {
+  if (props.decimals > 0) {
+    return props.value.toFixed(props.decimals)
+  }
+  return props.value.toString()
+})
 
 const changeColor = computed(() => {
   if (!props.change) return '#86868B'
@@ -49,7 +59,7 @@ const changeText = computed(() => {
       
       <!-- 中间：数值和单位 -->
       <div style="flex: 1; display: flex; align-items: flex-end;">
-        <span style="font-size: 48px; font-weight: 700; color: #1D1D1F; line-height: 1;">{{ value }}</span>
+        <span style="font-size: 48px; font-weight: 700; color: #1D1D1F; line-height: 1;">{{ formattedValue }}</span>
         <span 
           v-if="suffix" 
           style="font-size: 14px; color: #86868B; margin-left: 8px; margin-bottom: 6px;"

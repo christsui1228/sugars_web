@@ -51,6 +51,7 @@ export function useMarketData() {
       {
         title: '美元汇率',
         value: latest.value.usd_cny_rate,
+        decimals: 4,
         change: prev ? ((latest.value.usd_cny_rate - prev.usd_cny_rate) / prev.usd_cny_rate * 100) : undefined
       },
       {
